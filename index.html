@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#080d1b">
+<title>Mekra — Zamonaviy muloqot</title>
+<style>
+:root{--bg:#080d1b;--panel:rgba(255,255,255,.075);--pb:rgba(255,255,255,.14);--text:#f4f7ff;--muted:#aab5cb;--accent:#7c5cff;--ac2:#29d3c2}
+*{box-sizing:border-box;margin:0}
+html,body{min-height:100%}
+body{color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;background:radial-gradient(ellipse at 15% 15%,rgba(124,92,255,.23),transparent 42%),radial-gradient(ellipse at 85% 80%,rgba(41,211,194,.15),transparent 40%),linear-gradient(135deg,#070b16,#101a31 55%,#091323) fixed;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+.screen{display:none;width:100%;max-width:460px;margin:0 auto;padding:28px 16px}
+.screen.on{display:block}
+.brand{text-align:center;margin-bottom:22px}
+.logo{width:58px;height:58px;margin:0 auto 12px;border-radius:19px;display:grid;place-items:center;font-size:27px;font-weight:850;background:linear-gradient(135deg,var(--accent),#4a9eff);box-shadow:0 12px 38px rgba(124,92,255,.34)}
+h1{font-size:34px;letter-spacing:-.9px}
+.tag{margin-top:8px;color:var(--muted);font-size:14px}
+.card{background:var(--panel);border:1px solid var(--pb);border-radius:25px;padding:25px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 22px 70px rgba(0,0,0,.28)}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:5px;background:rgba(0,0,0,.22);border-radius:14px;margin-bottom:20px}
+.tab{border:0;color:var(--muted);background:transparent;border-radius:10px;padding:12px 8px;font:700 14px inherit;cursor:pointer}
+.tab.active{color:#fff;background:linear-gradient(135deg,#7658f8,#4f75e8)}
+.methods{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:18px}
+.method{border:1px solid var(--pb);border-radius:12px;padding:11px 8px;background:rgba(255,255,255,.035);color:#dce4f5;cursor:pointer;font:650 13px inherit}
+.method.active{border-color:rgba(124,92,255,.9);background:rgba(124,92,255,.16);color:#fff}
+.field{margin-bottom:15px}
+label{display:block;font-size:13px;font-weight:650;margin-bottom:8px;color:#e4e9f6}
+input{width:100%;border:1px solid var(--pb);border-radius:12px;padding:14px 13px;background:rgba(5,10,22,.55);color:#fff;font:inherit;font-size:15px;outline:none}
+input::placeholder{color:#75819a}
+input:focus-visible{border-color:#8871ff;box-shadow:0 0 0 3px rgba(124,92,255,.2)}
+.pw{position:relative}.pw input{padding-right:84px}
+.show{position:absolute;top:50%;right:10px;transform:translateY(-50%);border:0;background:none;color:#b8c3db;font-size:12px;cursor:pointer;padding:6px}
+.primary{width:100%;border:0;border-radius:13px;padding:15px;background:linear-gradient(135deg,var(--accent),#477ff0);color:#fff;font:800 15px inherit;cursor:pointer;box-shadow:0 9px 24px rgba(95,87,245,.24)}
+.primary:hover{filter:brightness(1.08)}.primary:disabled{opacity:.6}
+.notice{display:none;border-radius:12px;padding:12px 13px;margin-bottom:16px;font-size:13px;line-height:1.5}
+.notice.show{display:block}
+.notice.info{background:rgba(41,211,194,.1);border:1px solid rgba(41,211,194,.3);color:#baf7ef}
+.notice.error{background:rgba(255,100,125,.1);border:1px solid rgba(255,100,125,.3);color:#ffd2d8}
+.hidden{display:none!important}
+.bar{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.bar h2{flex:1;font-size:19px}
+.ghost{background:none;border:0;color:var(--muted);cursor:pointer;padding:8px;border-radius:8px;font:inherit}
+.ghost:hover{color:#fff}
+.user{display:flex;align-items:center;gap:12px;width:100%;background:none;border:0;border-bottom:1px solid var(--pb);padding:13px 4px;text-align:left;cursor:pointer;color:inherit;font:inherit}
+.user:hover{background:rgba(255,255,255,.05)}
+.av{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#4a9eff);display:grid;place-items:center;font-weight:800}
+.empty{color:var(--muted);padding:22px 4px;font-size:14px;line-height:1.5}
+#log{height:min(58vh,520px);overflow:auto;display:flex;flex-direction:column;gap:6px;padding:4px 2px 12px}
+.b{max-width:78%;padding:9px 13px;border-radius:15px;overflow-wrap:anywhere;background:rgba(255,255,255,.1)}
+.b.me{align-self:flex-end;background:linear-gradient(135deg,#7658f8,#4f75e8)}
+#send{display:flex;gap:8px;margin-top:6px}#send .primary{width:auto;padding:0 18px}
+</style>
+</head>
+<body>
+
+<main id="auth" class="screen on">
+  <header class="brand"><div class="logo" aria-hidden="true">M</div><h1>Mekra</h1><p class="tag">Zamonaviy muloqot. Yaqinlaringiz bilan bir joyda.</p></header>
+  <section class="card">
+    <div class="tabs"><button class="tab active" id="loginTab" type="button">Kirish</button><button class="tab" id="regTab" type="button">Ro‘yxatdan o‘tish</button></div>
+    <div id="notice" class="notice" role="status"></div>
+    <div class="methods"><button class="method" id="phoneM" type="button">☎ Telefon raqami</button><button class="method active" id="emailM" type="button">✉ Email</button></div>
+    <form id="form" novalidate>
+      <div class="field hidden" id="nameF"><label for="uname">Foydalanuvchi nomi</label><input id="uname" maxlength="24" autocomplete="username" placeholder="Masalan: sherboy"></div>
+      <div class="field"><label for="email">Email manzil</label><input id="email" type="email" autocomplete="email" inputmode="email" placeholder="siz@example.com"></div>
+      <div class="field"><label for="pass">Parol</label><div class="pw"><input id="pass" type="password" autocomplete="current-password" placeholder="Kamida 6 belgi"><button class="show" id="showB" type="button">Ko‘rsatish</button></div></div>
+      <button class="primary" id="go" type="submit">Kirish</button>
+    </form>
+  </section>
+</main>
+
+<main id="list" class="screen"><section class="card">
+  <div class="bar"><h2>Suhbatlar</h2><button class="ghost" id="out">Chiqish</button></div>
+  <div id="users"></div>
+</section></main>
+
+<main id="chat" class="screen"><section class="card">
+  <div class="bar"><button class="ghost" id="back">‹ Orqaga</button><h2 id="peerName"></h2></div>
+  <div id="log"></div>
+  <form id="send"><input id="text" placeholder="Xabar yozing" autocomplete="off" maxlength="2000"><button class="primary" type="submit">Yuborish</button></form>
+</section></main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.js"></script>
+<script>
+const sb = supabase.createClient("https://okqsnwpaxyejypaaysvq.supabase.co", "sb_publishable_EEOeX0I2l9qg1osKiY1OPw_pnKdPPhK");
+const $ = id => document.getElementById(id);
+let me = null, peer = null, inbox = null, signup = false;
+
+function show(id){ document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === id)); }
+function say(t, cls){ const n = $('notice'); n.textContent = t; n.className = t ? 'notice show ' + (cls || 'info') : 'notice'; }
+function setMode(s){
+  signup = s;
+  $('loginTab').classList.toggle('active', !s); $('regTab').classList.toggle('active', s);
+  $('nameF').classList.toggle('hidden', !s);
+  $('go').textContent = s ? 'Akkaunt yaratish' : 'Kirish';
+  $('pass').autocomplete = s ? 'new-password' : 'current-password';
+  say('');
+}
+$('loginTab').onclick = () => setMode(false);
+$('regTab').onclick = () => setMode(true);
+$('phoneM').onclick = () => say("Telefon raqami orqali kirish keyingi bosqichda qo‘shiladi (SMS xizmati kerak). Hozircha email bilan kiring.");
+$('showB').onclick = () => { const p = $('pass'); const sh = p.type === 'password'; p.type = sh ? 'text' : 'password'; $('showB').textContent = sh ? 'Yashirish' : 'Ko‘rsatish'; };
+
+$('form').onsubmit = async e => {
+  e.preventDefault();
+  const email = $('email').value.trim(), password = $('pass').value, username = $('uname').value.trim();
+  if (!email || password.length < 6) return say("Email va kamida 6 belgili parol kiriting.", 'error');
+  if (signup && username.length < 3) return say("Foydalanuvchi nomi kamida 3 belgi bo‘lsin.", 'error');
+  $('go').disabled = true; say('');
+  try {
+    if (signup) {
+      const { data, error } = await sb.auth.signUp({ email, password, options: { data: { username } } });
+      if (error) throw error;
+      if (!data.session) say("Emailingizga tasdiqlash xati yuborildi. Havolani bosing, so‘ng kiring.");
+    } else {
+      const { error } = await sb.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+    }
+  } catch (err) {
+    say(err.message.includes('Invalid login') ? "Email yoki parol noto‘g‘ri." : err.message, 'error');
+  }
+  $('go').disabled = false;
+};
+
+$('out').onclick = () => sb.auth.signOut();
+sb.auth.onAuthStateChange((_e, session) => {
+  if (session) { me = session.user; startApp(); }
+  else { me = null; peer = null; if (inbox) { sb.removeChannel(inbox); inbox = null; } show('auth'); }
+});
+
+async function startApp(){
+  show('list');
+  const { data, error } = await sb.from('profiles').select('id,username').neq('id', me.id).order('username');
+  const box = $('users'); box.innerHTML = '';
+  if (error) { box.innerHTML = '<p class="empty">Ro‘yxatni yuklab bo‘lmadi. Internetni tekshiring.</p>'; return; }
+  if (!data.length) box.innerHTML = '<p class="empty">Hozircha boshqa foydalanuvchi yo‘q. Do‘stingizni taklif qiling, u ro‘yxatdan o‘tgach shu yerda ko‘rinadi.</p>';
+  data.forEach(u => {
+    const b = document.createElement('button'); b.className = 'user';
+    const av = document.createElement('div'); av.className = 'av'; av.textContent = u.username[0].toUpperCase();
+    const nm = document.createElement('span'); nm.textContent = u.username;
+    b.append(av, nm); b.onclick = () => openChat(u); box.append(b);
+  });
+  if (inbox) sb.removeChannel(inbox);
+  inbox = sb.channel('inbox').on('postgres_changes',
+    { event: 'INSERT', schema: 'public', table: 'messages', filter: 'receiver=eq.' + me.id },
+    p => { if (peer && p.new.sender === peer.id) addBubble(p.new); }).subscribe();
+}
+function addBubble(m){
+  const d = document.createElement('div'); d.className = 'b' + (m.sender === me.id ? ' me' : ''); d.textContent = m.body;
+  const log = $('log'); log.append(d); log.scrollTop = log.scrollHeight;
+}
+async function openChat(u){
+  peer = u; $('peerName').textContent = u.username; $('log').innerHTML = ''; show('chat');
+  const f = `and(sender.eq.${me.id},receiver.eq.${u.id}),and(sender.eq.${u.id},receiver.eq.${me.id})`;
+  const { data } = await sb.from('messages').select('*').or(f).order('created_at').limit(200);
+  (data || []).forEach(addBubble);
+}
+$('back').onclick = () => { peer = null; show('list'); };
+$('send').onsubmit = async e => {
+  e.preventDefault();
+  const body = $('text').value.trim(); if (!body || !peer) return;
+  $('text').value = '';
+  const { data, error } = await sb.from('messages').insert({ sender: me.id, receiver: peer.id, body }).select().single();
+  if (error) { $('text').value = body; return alert("Xabar yuborilmadi. Qayta urinib ko‘ring."); }
+  addBubble(data);
+};
+</script>
+</body>
+</html>
